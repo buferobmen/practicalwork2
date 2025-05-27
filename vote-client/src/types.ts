@@ -1,6 +1,8 @@
 export type Poll = {
   id: number;
   title: string;
+    options: string[];       // ← додано
+  created_at: string;  
   votes: Vote[];
 };
 

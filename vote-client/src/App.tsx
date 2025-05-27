@@ -5,6 +5,7 @@ import { cable } from './cable';
 import { Poll, Vote } from './types';
 import EditPollPage from './pages/EditPollPage';
 import PollDetailsPage from './pages/PollDetailsPage';
+import HomePage from './pages/HomePage';
  // імпортуємо нову сторінку
 
 function PollPage() {
@@ -70,8 +71,7 @@ function App() {
         <Route path="/polls/:id/edit" element={<EditPollPage />} />
 
         {/* інші маршрути, наприклад головна сторінка */}
-        <Route path="/" element={<div>Головна сторінка</div>} />
-      </Routes>
+<Route path="/" element={<HomePage />} />      </Routes>
     </Router>
   );
 }
