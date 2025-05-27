@@ -1,9 +1,13 @@
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { api } from './api';
 import { cable } from './cable';
 import { Poll, Vote } from './types';
+import EditPollPage from './pages/EditPollPage';
+import PollDetailsPage from './pages/PollDetailsPage';
+ // імпортуємо нову сторінку
 
-function App() {
+function PollPage() {
   const [poll, setPoll] = useState<Poll | null>(null);
 
   useEffect(() => {
@@ -52,6 +56,23 @@ function App() {
         ))}
       </div>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+           {/* маршрут для перегляду голосування */}
+        <Route path="/polls/:id" element={<PollDetailsPage />} />
+
+        {/* маршрут для редагування голосування */}
+        <Route path="/polls/:id/edit" element={<EditPollPage />} />
+
+        {/* інші маршрути, наприклад головна сторінка */}
+        <Route path="/" element={<div>Головна сторінка</div>} />
+      </Routes>
+    </Router>
   );
 }
 
