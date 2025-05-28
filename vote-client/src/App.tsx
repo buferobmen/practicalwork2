@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { api } from './api';
 import { cable } from './cable';
@@ -6,14 +6,15 @@ import { Poll, Vote } from './types';
 import EditPollPage from './pages/EditPollPage';
 import PollDetailsPage from './pages/PollDetailsPage';
 import HomePage from './pages/HomePage';
- // імпортуємо нову сторінку
 
+// Компонент сторінки голосування
 function PollPage() {
+  const { id } = useParams();
   const [poll, setPoll] = useState<Poll | null>(null);
 
   useEffect(() => {
-    api.get<Poll>('/polls/1').then((res) => setPoll(res.data));
-  }, []);
+    api.get<Poll>(`/polls/${id}`).then((res) => setPoll(res.data));
+  }, [id]);
 
   useEffect(() => {
     if (!poll) return;
@@ -34,24 +35,26 @@ function PollPage() {
   }, [poll?.id]);
 
   const handleVote = (option: string) => {
-    api.post('/votes', {
-      vote: { poll_id: poll?.id, option },
-    });
+    api.post(`/polls/${id}/vote`, { option });
   };
 
   const getCount = (option: string) =>
     poll?.votes.filter((v) => v.option === option).length ?? 0;
 
-  if (!poll) return <p>Loading...</p>;
+  if (!poll) return <p>Завантаження...</p>;
 
-  const uniqueOptions = Array.from(new Set(poll.votes.map((v) => v.option)));
+  const uniqueOptions = poll.options;
 
   return (
-    <div>
-      <h1>{poll.title}</h1>
-      <div style={{ display: 'flex', gap: '1rem' }}>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">{poll.title}</h1>
+      <div className="flex flex-col gap-2 mb-4">
         {uniqueOptions.map((option) => (
-          <button key={option} onClick={() => handleVote(option)}>
+          <button
+            key={option}
+            onClick={() => handleVote(option)}
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
             {option} ({getCount(option)})
           </button>
         ))}
@@ -60,18 +63,16 @@ function PollPage() {
   );
 }
 
+// Головний компонент з маршрутами
 function App() {
   return (
     <Router>
       <Routes>
-           {/* маршрут для перегляду голосування */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/polls/:id/vote" element={<PollPage />} />
         <Route path="/polls/:id" element={<PollDetailsPage />} />
-
-        {/* маршрут для редагування голосування */}
         <Route path="/polls/:id/edit" element={<EditPollPage />} />
-
-        {/* інші маршрути, наприклад головна сторінка */}
-<Route path="/" element={<HomePage />} />      </Routes>
+      </Routes>
     </Router>
   );
 }

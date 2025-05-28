@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :polls, only: [:index, :show, :update]
+      resources :polls, only: [:index, :show, :update] do
+        member do
+          post :vote
+        end
+      end
       resources :votes, only: [:create]
     end
   end
@@ -15,3 +19,4 @@ Rails.application.routes.draw do
   # root "posts#index"
   mount ActionCable.server => '/cable'
 end
+
