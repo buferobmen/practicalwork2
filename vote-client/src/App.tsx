@@ -6,6 +6,8 @@ import { Poll, Vote } from './types';
 import EditPollPage from './pages/EditPollPage';
 import PollDetailsPage from './pages/PollDetailsPage';
 import HomePage from './pages/HomePage';
+import NewPollPage from './pages/NewPollPage';
+
 
 // Компонент сторінки голосування
 function PollPage() {
@@ -68,6 +70,7 @@ function App() {
   return (
     <Router>
       <Routes>
+          <Route path="/polls/new" element={<NewPollPage />} />
         <Route path="/" element={<HomePage />} />
         <Route path="/polls/:id/vote" element={<PollPage />} />
         <Route path="/polls/:id" element={<PollDetailsPage />} />

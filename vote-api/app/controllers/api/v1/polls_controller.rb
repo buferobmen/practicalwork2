@@ -5,7 +5,7 @@ class Api::V1::PollsController < ApplicationController
 
   def show
     poll = Poll.find(params[:id])
-     votes_count = poll.votes.group(:option).count
+    votes_count = poll.votes.group(:option).count
     render json: {
       id: poll.id,
       title: poll.title,
@@ -13,6 +13,16 @@ class Api::V1::PollsController < ApplicationController
       votes: poll.votes || {}
     }
   end
+
+def create
+  Rails.logger.debug "Параметри для створення: #{params.inspect}"
+  poll = Poll.new(poll_params)
+  if poll.save
+    render json: poll, status: :created
+  else
+    render json: { error: poll.errors.full_messages }, status: :unprocessable_entity
+  end
+end
 
   def update
     poll = Poll.find(params[:id])
@@ -31,12 +41,9 @@ class Api::V1::PollsController < ApplicationController
       return render json: { error: "Invalid option" }, status: :unprocessable_entity
     end
 
-      Vote.create!(poll: poll, option: option)
-
-  votes_count = poll.votes.group(:option).count
-    poll.save!
-
-    render json: { success: true, votes: poll.votes }
+    Vote.create!(poll: poll, option: option)
+    votes_count = poll.votes.group(:option).count
+    render json: { success: true, votes: votes_count }
   end
 
   private
